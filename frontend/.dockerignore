@@ -5,5 +5,3 @@ dist
 README.md
 *.log
 .env
-Dockerfile
-docker-compose.yml

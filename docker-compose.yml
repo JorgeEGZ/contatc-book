@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   db:
     image: postgres:13
@@ -30,11 +28,11 @@ services:
     environment:
       DEBUG: ${DEBUG:-True}
       SECRET_KEY: ${SECRET_KEY:-dev-secret-key}
-      POSTGRES_DB: ${POSTGRES_DB:-contactdb}
-      POSTGRES_USER: ${POSTGRES_USER:-contactuser}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-contactpassword}
-      POSTGRES_HOST: db
-      POSTGRES_PORT: 5432
+      DB_NAME: ${POSTGRES_DB:-contactdb}       
+      DB_USER: ${POSTGRES_USER:-contactuser}   
+      DB_PASSWORD: ${POSTGRES_PASSWORD:-contactpassword}  
+      DB_HOST: db
+      DB_PORT: 5432
       ALLOWED_HOSTS: ${ALLOWED_HOSTS:-localhost,127.0.0.1,backend}
     depends_on:
       - db

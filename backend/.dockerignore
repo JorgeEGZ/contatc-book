@@ -37,10 +37,6 @@ media
 ehthumbs.db
 Thumbs.db
 
-# Docker
-Dockerfile
-.dockerignore
-
 # Logs
 logs/
 *.log
