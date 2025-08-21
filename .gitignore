@@ -85,11 +85,7 @@ build/
 .tox/
 .nox/
 
-# Docker (opcional, si quieres ignorar archivos Docker de desarrollo)
-# docker-compose.override.yml
-# docker-compose.dev.yml
-
-# Archivos de base de datos (excepto si son necesarios)
+# Archivos de base de datos
 *.db
 *.sqlite
 

@@ -1,77 +1,66 @@
 version: '3.8'
 
 services:
-  # Base de datos PostgreSQL
   db:
     image: postgres:13
-    volumes:
-      - postgres_data:/var/lib/postgresql/data/
+    container_name: contact_db
+    env_file:
+      - .env 
     environment:
-      POSTGRES_DB: contactdb
-      POSTGRES_USER: contactuser
-      POSTGRES_PASSWORD: contactpass
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U contactuser -d contactdb"]
-      interval: 30s
-      timeout: 10s
-      retries: 5
+      POSTGRES_DB: ${POSTGRES_DB:-contactdb}
+      POSTGRES_USER: ${POSTGRES_USER:-contactuser}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-contactpassword}
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
     networks:
-      - app-network
+      - contact-network
 
-  # Backend Django
-  web:
+  backend:
     build: ./backend
+    container_name: contact_backend
     command: python manage.py runserver 0.0.0.0:8000
     volumes:
       - ./backend:/app
     ports:
       - "8000:8000"
+    env_file:
+      - .env 
     environment:
-      - DEBUG=False
-      - DB_NAME=contactdb
-      - DB_USER=contactuser
-      - DB_PASSWORD=contactpass
-      - DB_HOST=db
-      - DB_PORT=5432
-      - ALLOWED_HOSTS=localhost,127.0.0.1,0.0.0.0,web,nginx
+      DEBUG: ${DEBUG:-True}
+      SECRET_KEY: ${SECRET_KEY:-dev-secret-key}
+      POSTGRES_DB: ${POSTGRES_DB:-contactdb}
+      POSTGRES_USER: ${POSTGRES_USER:-contactuser}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-contactpassword}
+      POSTGRES_HOST: db
+      POSTGRES_PORT: 5432
+      ALLOWED_HOSTS: ${ALLOWED_HOSTS:-localhost,127.0.0.1,backend}
     depends_on:
-      db:
-        condition: service_healthy
+      - db
     networks:
-      - app-network
+      - contact-network
 
-  # Frontend Angular con nginx
-  nginx:
+  frontend:
     build: ./frontend
+    container_name: contact_frontend
     ports:
-      - "80:80"
-      - "443:443"
-    depends_on:
-      - web
-    networks:
-      - app-network
-    restart: unless-stopped
-
-  # Servicio de desarrollo frontend (opcional)
-  frontend-dev:
-    build: 
-      context: ./frontend
-      target: build
+      - "4200:4200"
     volumes:
       - ./frontend:/app
       - /app/node_modules
-    ports:
-      - "4200:4200"
-    command: npm start -- --host 0.0.0.0 --poll 500
+    env_file:
+      - .env 
     environment:
-      - NODE_ENV=development
+      NG_APP_API_URL: ${NG_APP_API_URL:-http://localhost:8000/api}
+    depends_on:
+      - backend
     networks:
-      - app-network
-    profiles: ["development"]
+      - contact-network
 
 volumes:
   postgres_data:
 
 networks:
-  app-network:
+  contact-network:
     driver: bridge
