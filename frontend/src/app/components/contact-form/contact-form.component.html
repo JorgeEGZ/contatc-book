@@ -1,0 +1,169 @@
+<div class="container mt-4">
+  <div class="row justify-content-center">
+    <div class="col-md-10 col-lg-8">
+      <div class="card shadow-sm">
+        <div class="card-header bg-primary text-white">
+          <h4 class="card-title mb-0">
+            <i class="bi bi-person-plus me-2"></i>
+            {{ isEdit ? 'Editar Contacto' : 'Nuevo Contacto' }}
+          </h4>
+        </div>
+        
+        <div class="card-body">
+          <!-- Error Message -->
+          <div *ngIf="error" class="alert alert-danger" role="alert">
+            <i class="bi bi-exclamation-triangle-fill me-2"></i>
+            {{ error }}
+          </div>
+
+          <form [formGroup]="contactForm" (ngSubmit)="onSubmit()">
+            <div class="row">
+              <div class="col-md-6 mb-3">
+                <label for="firstName" class="form-label">Nombre *</label>
+                <input 
+                  type="text" 
+                  class="form-control" 
+                  id="firstName"
+                  formControlName="first_name"
+                  [class.is-invalid]="contactForm.get('first_name')?.invalid && contactForm.get('first_name')?.touched">
+                <div class="invalid-feedback" *ngIf="contactForm.get('first_name')?.hasError('required')">
+                  El nombre es requerido
+                </div>
+                <div class="invalid-feedback" *ngIf="contactForm.get('first_name')?.hasError('maxlength')">
+                  Máximo 100 caracteres
+                </div>
+              </div>
+
+              <div class="col-md-6 mb-3">
+                <label for="lastName" class="form-label">Apellido *</label>
+                <input 
+                  type="text" 
+                  class="form-control" 
+                  id="lastName"
+                  formControlName="last_name"
+                  [class.is-invalid]="contactForm.get('last_name')?.invalid && contactForm.get('last_name')?.touched">
+                <div class="invalid-feedback" *ngIf="contactForm.get('last_name')?.hasError('required')">
+                  El apellido es requerido
+                </div>
+                <div class="invalid-feedback" *ngIf="contactForm.get('last_name')?.hasError('maxlength')">
+                  Máximo 100 caracteres
+                </div>
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col-md-6 mb-3">
+                <label for="email" class="form-label">Email *</label>
+                <input 
+                  type="email" 
+                  class="form-control" 
+                  id="email"
+                  formControlName="email"
+                  [class.is-invalid]="contactForm.get('email')?.invalid && contactForm.get('email')?.touched">
+                <div class="invalid-feedback" *ngIf="contactForm.get('email')?.hasError('required')">
+                  El email es requerido
+                </div>
+                <div class="invalid-feedback" *ngIf="contactForm.get('email')?.hasError('email')">
+                  Email inválido
+                </div>
+              </div>
+
+              <div class="col-md-6 mb-3">
+                <label for="company" class="form-label">Empresa</label>
+                <input 
+                  type="text" 
+                  class="form-control" 
+                  id="company"
+                  formControlName="company"
+                  [class.is-invalid]="contactForm.get('company')?.hasError('maxlength')">
+                <div class="invalid-feedback" *ngIf="contactForm.get('company')?.hasError('maxlength')">
+                  Máximo 100 caracteres
+                </div>
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col-md-6 mb-3">
+                <label for="phone" class="form-label">Teléfono Fijo</label>
+                <input 
+                  type="tel" 
+                  class="form-control" 
+                  id="phone"
+                  formControlName="phone"
+                  [class.is-invalid]="contactForm.get('phone')?.hasError('maxlength')">
+                <div class="invalid-feedback" *ngIf="contactForm.get('phone')?.hasError('maxlength')">
+                  Máximo 20 caracteres
+                </div>
+              </div>
+
+              <div class="col-md-6 mb-3">
+                <label for="mobile" class="form-label">Teléfono Móvil</label>
+                <input 
+                  type="tel" 
+                  class="form-control" 
+                  id="mobile"
+                  formControlName="mobile"
+                  [class.is-invalid]="contactForm.get('mobile')?.hasError('maxlength')">
+                <div class="invalid-feedback" *ngIf="contactForm.get('mobile')?.hasError('maxlength')">
+                  Máximo 20 caracteres
+                </div>
+              </div>
+            </div>
+
+            <div class="mb-3">
+              <label for="position" class="form-label">Cargo/Puesto</label>
+              <input 
+                type="text" 
+                class="form-control" 
+                id="position"
+                formControlName="position"
+                [class.is-invalid]="contactForm.get('position')?.hasError('maxlength')">
+              <div class="invalid-feedback" *ngIf="contactForm.get('position')?.hasError('maxlength')">
+                Máximo 100 caracteres
+              </div>
+            </div>
+
+            <div class="mb-3">
+              <label for="address" class="form-label">Dirección</label>
+              <textarea 
+                class="form-control" 
+                id="address"
+                formControlName="address"
+                rows="2"></textarea>
+            </div>
+
+            <div class="mb-3">
+              <label for="notes" class="form-label">Notas</label>
+              <textarea 
+                class="form-control" 
+                id="notes"
+                formControlName="notes"
+                rows="3"
+                placeholder="Notas adicionales sobre el contacto..."></textarea>
+            </div>
+
+            <div class="d-flex justify-content-between">
+              <button type="button" class="btn btn-secondary" (click)="onCancel()">
+                <i class="bi bi-arrow-left"></i> Cancelar
+              </button>
+              
+              <button 
+                type="submit" 
+                class="btn btn-primary"
+                [disabled]="!contactForm.valid || loading">
+                <span *ngIf="!loading">
+                  <i class="bi bi-check-circle"></i>
+                  {{ isEdit ? 'Actualizar' : 'Crear' }} Contacto
+                </span>
+                <span *ngIf="loading">
+                  <span class="spinner-border spinner-border-sm" role="status"></span>
+                  Guardando...
+                </span>
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

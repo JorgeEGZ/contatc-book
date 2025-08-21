@@ -1,0 +1,77 @@
+version: '3.8'
+
+services:
+  # Base de datos PostgreSQL
+  db:
+    image: postgres:13
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+    environment:
+      POSTGRES_DB: contactdb
+      POSTGRES_USER: contactuser
+      POSTGRES_PASSWORD: contactpass
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U contactuser -d contactdb"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+    networks:
+      - app-network
+
+  # Backend Django
+  web:
+    build: ./backend
+    command: python manage.py runserver 0.0.0.0:8000
+    volumes:
+      - ./backend:/app
+    ports:
+      - "8000:8000"
+    environment:
+      - DEBUG=False
+      - DB_NAME=contactdb
+      - DB_USER=contactuser
+      - DB_PASSWORD=contactpass
+      - DB_HOST=db
+      - DB_PORT=5432
+      - ALLOWED_HOSTS=localhost,127.0.0.1,0.0.0.0,web,nginx
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - app-network
+
+  # Frontend Angular con nginx
+  nginx:
+    build: ./frontend
+    ports:
+      - "80:80"
+      - "443:443"
+    depends_on:
+      - web
+    networks:
+      - app-network
+    restart: unless-stopped
+
+  # Servicio de desarrollo frontend (opcional)
+  frontend-dev:
+    build: 
+      context: ./frontend
+      target: build
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    ports:
+      - "4200:4200"
+    command: npm start -- --host 0.0.0.0 --poll 500
+    environment:
+      - NODE_ENV=development
+    networks:
+      - app-network
+    profiles: ["development"]
+
+volumes:
+  postgres_data:
+
+networks:
+  app-network:
+    driver: bridge

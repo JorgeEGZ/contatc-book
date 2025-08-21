@@ -1,0 +1,23 @@
+.table-hover tbody tr:hover {
+  background-color: rgba(13, 110, 253, 0.05);
+  cursor: pointer;
+}
+
+.btn-group .btn {
+  margin: 0 2px;
+}
+
+@media (max-width: 768px) {
+  .btn-group {
+    flex-direction: column;
+  }
+  
+  .btn-group .btn {
+    margin: 2px 0;
+    width: 100%;
+  }
+  
+  .table-responsive {
+    font-size: 0.9rem;
+  }
+}

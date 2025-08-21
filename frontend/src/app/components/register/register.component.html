@@ -1,0 +1,103 @@
+<div class="container mt-5">
+  <div class="row justify-content-center">
+    <div class="col-md-8 col-lg-6">
+      <div class="card shadow">
+        <div class="card-header bg-primary text-white text-center">
+          <h4 class="card-title mb-0">Crear Cuenta</h4>
+          <small>Regístrate para gestionar tus contactos</small>
+        </div>
+        
+        <div class="card-body">
+          <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
+            <div class="row">
+              <div class="col-md-6 mb-3">
+                <label for="username" class="form-label">Usuario *</label>
+                <input 
+                  type="text" 
+                  class="form-control" 
+                  id="username"
+                  formControlName="username"
+                  [class.is-invalid]="registerForm.get('username')?.invalid && registerForm.get('username')?.touched">
+                <div class="invalid-feedback" *ngIf="registerForm.get('username')?.hasError('required')">
+                  El usuario es requerido
+                </div>
+                <div class="invalid-feedback" *ngIf="registerForm.get('username')?.hasError('minlength')">
+                  Mínimo 3 caracteres
+                </div>
+              </div>
+
+              <div class="col-md-6 mb-3">
+                <label for="email" class="form-label">Email *</label>
+                <input 
+                  type="email" 
+                  class="form-control" 
+                  id="email"
+                  formControlName="email"
+                  [class.is-invalid]="registerForm.get('email')?.invalid && registerForm.get('email')?.touched">
+                <div class="invalid-feedback" *ngIf="registerForm.get('email')?.hasError('required')">
+                  El email es requerido
+                </div>
+                <div class="invalid-feedback" *ngIf="registerForm.get('email')?.hasError('email')">
+                  Email inválido
+                </div>
+              </div>
+            </div>
+
+            <div class="mb-3">
+              <label for="password" class="form-label">Contraseña *</label>
+              <input 
+                type="password" 
+                class="form-control" 
+                id="password"
+                formControlName="password"
+                [class.is-invalid]="registerForm.get('password')?.invalid && registerForm.get('password')?.touched">
+              <div class="invalid-feedback" *ngIf="registerForm.get('password')?.hasError('required')">
+                La contraseña es requerida
+              </div>
+              <div class="invalid-feedback" *ngIf="registerForm.get('password')?.hasError('minlength')">
+                Mínimo 6 caracteres
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col-md-6 mb-3">
+                <label for="firstName" class="form-label">Nombre (opcional)</label>
+                <input 
+                  type="text" 
+                  class="form-control" 
+                  id="firstName"
+                  formControlName="first_name">
+              </div>
+
+              <div class="col-md-6 mb-3">
+                <label for="lastName" class="form-label">Apellido (opcional)</label>
+                <input 
+                  type="text" 
+                  class="form-control" 
+                  id="lastName"
+                  formControlName="last_name">
+              </div>
+            </div>
+
+            <button 
+              type="submit" 
+              class="btn btn-primary w-100"
+              [disabled]="!registerForm.valid || loading">
+              <span *ngIf="!loading">Registrarse</span>
+              <span *ngIf="loading">
+                <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                Cargando...
+              </span>
+            </button>
+          </form>
+        </div>
+
+        <div class="card-footer text-center">
+          <a routerLink="/login" class="btn btn-link text-decoration-none">
+            ¿Ya tienes cuenta? Inicia sesión
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
